@@ -2,12 +2,12 @@ import { API } from 'aws-amplify';
 import React, { ChangeEventHandler, FormEventHandler, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { useHistory } from 'react-router-dom';
-import { LoaderButton } from '../components/LoaderButton';
-import config from '../config';
-import { s3Upload } from '../libs/awsLib';
-import { onError } from '../libs/errorLib';
-import './NewNote.css';
-import { Note } from './Notes';
+import { LoaderButton } from '../../components/ButtonLoader/ButtonLoader';
+import config from '../../config';
+import { s3Upload } from '../../libs/awsLib';
+import { onError } from '../../libs/errorLib';
+import './NewNote.page.css';
+import { Note } from './Notes.page';
 
 
 export const NewNote: React.FC = () => {

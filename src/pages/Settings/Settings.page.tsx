@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { API } from 'aws-amplify';
 import { useHistory } from 'react-router-dom';
 import { Elements, StripeProvider } from 'react-stripe-elements';
-import BillingForm from '../components/BillingForm';
-import { onError } from '../libs/errorLib';
-import config from '../config';
-import './Settings.css';
+import BillingForm from '../../components/FormBilling/Billing.form';
+import { onError } from '../../libs/errorLib';
+import config from '../../config';
+import './Settings.page.css';
 
 export interface Bill { storage: string; source: string }
 

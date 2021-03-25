@@ -5,10 +5,10 @@ import Navbar from 'react-bootstrap/Navbar';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import './App.css';
-import ErrorBoundary from './components/ErrorBoundary';
-import { AppContext } from './libs/contextLib';
-import { onError } from './libs/errorLib';
-import Routes from './Routes';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import { AppContext } from '../../libs/contextLib';
+import { onError } from '../../libs/errorLib';
+import { Routes } from '../Routes/Routes';
 
 export const App = () => {
   const history = useHistory();

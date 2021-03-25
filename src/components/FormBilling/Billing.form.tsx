@@ -1,9 +1,9 @@
 import React, { FormEventHandler, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { CardElement, injectStripe } from 'react-stripe-elements';
-import { LoaderButton } from './LoaderButton';
-import { useFormFields } from '../libs/hooksLib';
-import './BillingForm.css';
+import { LoaderButton } from '../ButtonLoader/ButtonLoader';
+import { useFormFields } from '../../libs/hooksLib';
+import './Billing.form.css';
 
 export interface BillingFormProps {
   isLoading?: boolean;

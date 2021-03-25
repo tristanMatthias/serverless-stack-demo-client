@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
-import { useAppContext } from '../libs/contextLib';
+import { useAppContext } from '../../libs/contextLib';
 
 export const querystring = (name: string, url = window.location.href) => {
   const n = name.replace(/[[]]/g, '\\$&');

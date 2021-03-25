@@ -2,11 +2,11 @@ import { API, Storage } from 'aws-amplify';
 import React, { ChangeEventHandler, FormEventHandler, MouseEventHandler, useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { useHistory, useParams } from 'react-router-dom';
-import { LoaderButton } from '../components/LoaderButton';
-import config from '../config';
-import { s3Upload } from '../libs/awsLib';
-import { onError } from '../libs/errorLib';
-import './Notes.css';
+import { LoaderButton } from '../../components/ButtonLoader/ButtonLoader';
+import config from '../../config';
+import { s3Upload } from '../../libs/awsLib';
+import { onError } from '../../libs/errorLib';
+import './Notes.page.css';
 
 
 export interface Note {

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
 import { API } from 'aws-amplify';
-import { Link } from 'react-router-dom';
-import { BsPencilSquare } from 'react-icons/bs';
+import React, { useEffect, useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
+import { BsPencilSquare } from 'react-icons/bs';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useAppContext } from '../libs/contextLib';
-import { onError } from '../libs/errorLib';
-import './Home.css';
-import { Note } from './Notes';
+import { Link } from 'react-router-dom';
+import { useAppContext } from '../../libs/contextLib';
+import { onError } from '../../libs/errorLib';
+import { Note } from '../Notes/Notes.page';
+import './Home.page.css';
 
 export default function Home() {
   const [notes, setNotes] = useState([]);

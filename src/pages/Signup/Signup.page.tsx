@@ -3,11 +3,11 @@ import { ISignUpResult } from 'amazon-cognito-identity-js';
 import React, { FormEventHandler, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { useHistory } from 'react-router-dom';
-import { LoaderButton } from '../components/LoaderButton';
-import { useAppContext } from '../libs/contextLib';
-import { onError } from '../libs/errorLib';
-import { useFormFields } from '../libs/hooksLib';
-import './Signup.css';
+import { LoaderButton } from '../../components/ButtonLoader/ButtonLoader';
+import { useAppContext } from '../../libs/contextLib';
+import { onError } from '../../libs/errorLib';
+import { useFormFields } from '../../libs/hooksLib';
+import './Signup.page.css';
 
 // export interface NewUser {
 //   email: string;
