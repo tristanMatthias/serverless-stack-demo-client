@@ -1,0 +1,107 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "import", "jest"],
+  "extends": [
+    "airbnb/base",
+    "plugin:@typescript-eslint/recommended"
+  ],
+
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "packages/api/types.ts",
+    "*.stories.ts",
+    "*.spec.ts",
+    "*.test.ts"
+  ],
+
+  "env":{
+    "browser": true,
+    "node": true,
+    "jasmine": true,
+    "jest/globals": true
+  },
+
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts", ".tsx", ".js"]
+      },
+      "typescript": {
+        "alwaysTryTypes": true, // always try to resolve types under `<roo/>@types` directory even it doesn't contain any source code, like `@types/unist`
+        "project": "./tsconfig.json"
+      }
+    }
+  },
+  "rules": {
+    "import/no-unresolved": "error",
+    "import/prefer-default-export": 0,
+    "import/no-extraneous-dependencies": 0,
+    "import/extensions": 0,
+    "import-name": 0,
+
+    "indent": ["error", 2, {
+      "ignoredNodes": ["TemplateLiteral > *"],
+      "SwitchCase": 1
+    }],
+    "no-multiple-empty-lines": ["error", {"max": 2}],
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "padded-blocks": 0,
+
+    "no-restricted-syntax": 0,
+    "no-cond-assign": 0,
+
+    // Prevent ESlint complaining about related interfaces being accessed before definition
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
+
+    "no-unused-expressions": "off",
+    "@typescript-eslint/no-unused-expressions": ["error", { "allowTernary": true }],
+
+    "array-bracket-spacing": ["error", "never"],
+    "arrow-parens": ["error", "as-needed"],
+    "class-methods-use-this": 0,
+    "comma-dangle": ["error", "never"],
+    "computed-property-spacing": ["error", "never"],
+
+    "consistent-return": 0,
+    "no-return-assign": 0,
+
+    "implicit-arrow-linebreak": 0,
+    "import/no-cycle": 0,
+    "linebreak-style": 0,
+    "max-classes-per-file": 0, // Leads to too many files
+    "no-empty-function": ["error", {"allow": ["constructors"]}], // Needed by NestJS dep injection
+    "no-empty": [2, {
+      "allowEmptyCatch": true
+    }],
+    "no-underscore-dangle": 0,
+    "no-useless-constructor": 0, // Needed by NestJS dep injection
+    "object-curly-newline": 0,
+    "object-curly-spacing": ["error", "always"],
+    "no-nested-ternary": 0,
+    "no-case-declarations": 0,
+
+    "no-bitwise": 0,
+    "radix": 0,
+
+    "default-case": 0,
+    "no-param-reassign": ["error", {"props": false}],
+    "no-multi-assign": 0,
+    "max-len": ["error", { "code": 140 }],
+
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/ban-types": 0,
+
+    "no-alert": 0
+  }
+}

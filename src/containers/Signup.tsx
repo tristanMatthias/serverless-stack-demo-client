@@ -1,30 +1,38 @@
-import React, { useState } from "react";
-import { Auth } from "aws-amplify";
-import Form from "react-bootstrap/Form";
-import { useHistory } from "react-router-dom";
-import LoaderButton from "../components/LoaderButton";
-import { useAppContext } from "../libs/contextLib";
-import { useFormFields } from "../libs/hooksLib";
-import { onError } from "../libs/errorLib";
-import "./Signup.css";
+import { Auth } from 'aws-amplify';
+import { ISignUpResult } from 'amazon-cognito-identity-js';
+import React, { FormEventHandler, useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import { useHistory } from 'react-router-dom';
+import { LoaderButton } from '../components/LoaderButton';
+import { useAppContext } from '../libs/contextLib';
+import { onError } from '../libs/errorLib';
+import { useFormFields } from '../libs/hooksLib';
+import './Signup.css';
+
+// export interface NewUser {
+//   email: string;
+//   password: string;
+//   confirmPassword: string;
+//   confirmationCode: string;
+// }
 
 export default function Signup() {
   const [fields, handleFieldChange] = useFormFields({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    confirmationCode: "",
+    email: '',
+    password: '',
+    confirmPassword: '',
+    confirmationCode: ''
   });
   const history = useHistory();
-  const [newUser, setNewUser] = useState(null);
+  const [newUser, setNewUser] = useState<ISignUpResult>();
   const { userHasAuthenticated } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
 
   function validateForm() {
     return (
-      fields.email.length > 0 &&
-      fields.password.length > 0 &&
-      fields.password === fields.confirmPassword
+      fields.email.length > 0
+      && fields.password.length > 0
+      && fields.password === fields.confirmPassword
     );
   }
 
@@ -32,25 +40,25 @@ export default function Signup() {
     return fields.confirmationCode.length > 0;
   }
 
-  async function handleSubmit(event) {
+  const handleSubmit: FormEventHandler = async event => {
     event.preventDefault();
 
     setIsLoading(true);
 
     try {
-      const newUser = await Auth.signUp({
+      const user = await Auth.signUp({
         username: fields.email,
-        password: fields.password,
+        password: fields.password
       });
       setIsLoading(false);
-      setNewUser(newUser);
+      setNewUser(user);
     } catch (e) {
       onError(e);
       setIsLoading(false);
     }
-  }
+  };
 
-  async function handleConfirmationSubmit(event) {
+  const handleConfirmationSubmit: FormEventHandler = async event => {
     event.preventDefault();
 
     setIsLoading(true);
@@ -58,14 +66,14 @@ export default function Signup() {
     try {
       await Auth.confirmSignUp(fields.email, fields.confirmationCode);
       await Auth.signIn(fields.email, fields.password);
+      userHasAuthenticated!(true);
+      history.push('/');
 
-      userHasAuthenticated(true);
-      history.push("/");
     } catch (e) {
       onError(e);
       setIsLoading(false);
     }
-  }
+  };
 
   function renderConfirmationForm() {
     return (

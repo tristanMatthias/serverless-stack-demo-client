@@ -1,37 +1,48 @@
-import React, { useState } from "react";
-import Form from "react-bootstrap/Form";
-import { CardElement, injectStripe } from "react-stripe-elements";
-import LoaderButton from "./LoaderButton";
-import { useFormFields } from "../libs/hooksLib";
-import "./BillingForm.css";
+import React, { FormEventHandler, useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import { CardElement, injectStripe } from 'react-stripe-elements';
+import { LoaderButton } from './LoaderButton';
+import { useFormFields } from '../libs/hooksLib';
+import './BillingForm.css';
 
-function BillingForm({ isLoading, onSubmit, ...props }) {
+export interface BillingFormProps {
+  isLoading?: boolean;
+  onSubmit: (storage: string, details: { token: string, error?: Error }) => void;
+  stripe?: any;
+}
+
+const BillingForm: React.FC<BillingFormProps> = ({
+  isLoading = false,
+  onSubmit,
+  ...props
+}) => {
+
   const [fields, handleFieldChange] = useFormFields({
-    name: "",
-    storage: "",
+    name: '',
+    storage: ''
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCardComplete, setIsCardComplete] = useState(false);
 
-  isLoading = isProcessing || isLoading;
+  const loading = isProcessing || isLoading;
 
-  function validateForm() {
-    return fields.name !== "" && fields.storage !== "" && isCardComplete;
-  }
+  const validateForm = () =>
+    fields.name !== '' && fields.storage !== '' && isCardComplete;
 
-  async function handleSubmitClick(event) {
+
+  const handleSubmitClick: FormEventHandler = async event => {
     event.preventDefault();
 
     setIsProcessing(true);
 
     const { token, error } = await props.stripe.createToken({
-      name: fields.name,
+      name: fields.name
     });
 
     setIsProcessing(false);
 
     onSubmit(fields.storage, { token, error });
-  }
+  };
 
   return (
     <Form className="BillingForm" onSubmit={handleSubmitClick}>
@@ -58,26 +69,26 @@ function BillingForm({ isLoading, onSubmit, ...props }) {
       <Form.Label>Credit Card Info</Form.Label>
       <CardElement
         className="card-field"
-        onChange={(e) => setIsCardComplete(e.complete)}
+        onChange={e => setIsCardComplete(e.complete)}
         style={{
           base: {
-            fontSize: "16px",
-            color: "#495057",
-            fontFamily: "'Open Sans', sans-serif",
-          },
+            fontSize: '16px',
+            color: '#495057',
+            fontFamily: "'Open Sans', sans-serif"
+          }
         }}
       />
       <LoaderButton
         block
         size="lg"
         type="submit"
-        isLoading={isLoading}
+        isLoading={loading}
         disabled={!validateForm()}
       >
         Purchase
       </LoaderButton>
     </Form>
   );
-}
+};
 
 export default injectStripe(BillingForm);

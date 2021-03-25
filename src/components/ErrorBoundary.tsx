@@ -1,15 +1,15 @@
-import React from "react";
-import { logError } from "../libs/errorLib";
-import "./ErrorBoundary.css";
+import React from 'react';
+import { logError } from '../libs/errorLib';
+import './ErrorBoundary.css';
 
 export default class ErrorBoundary extends React.Component {
   state = { hasError: false };
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: any) {
     logError(error, errorInfo);
   }
 
