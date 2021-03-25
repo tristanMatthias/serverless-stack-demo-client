@@ -10,12 +10,12 @@ import NotFound from '../../pages/NotFound/NotFound.page';
 import { AuthenticatedRoute } from './Authenticated.route';
 import { UnauthenticatedRoute } from './Unauthenticated.route';
 
-interface IRoute { component: JSX.Element, auth?: boolean }
+interface IRoute { component: JSX.Element, auth?: boolean, exact?: boolean }
 
 export const ROUTES: { [path: string]: IRoute } = {
   '/': { component: <Home /> },
   '/login': { component: <Login />, auth: false },
-  '/signup': { component: <Signup />, auth: false },
+  '/signup': { component: <Signup />, auth: false, exact: false },
   '/settings': { component: <Settings />, auth: true },
   '/notes/new': { component: <NewNote />, auth: true },
   '/notes/:id': { component: <Notes />, auth: true },
@@ -24,15 +24,11 @@ export const ROUTES: { [path: string]: IRoute } = {
 
 export const Routes: React.FC = () => <Switch>
   {Object.entries(ROUTES).map(([path, r]) => {
+    const props = { key: path, path, exact: r.exact ?? true, children: r.component };
     switch (r.auth) {
-      case true:
-        return <AuthenticatedRoute exact path={path}> {r.component} </AuthenticatedRoute>;
-
-      case false:
-        return <UnauthenticatedRoute exact path={path}> {r.component} </UnauthenticatedRoute>;
-
-      default:
-        return <Route exact path={path}> {r.component} </Route>;
+      case true: return <AuthenticatedRoute {...props} />;
+      case false: return <UnauthenticatedRoute {...props} />;
+      default: return <Route {...props} />;
     }
   })}
 </Switch>;

@@ -7,6 +7,7 @@ import { App } from './components/App/App';
 import config from './config';
 import { initSentry } from './libs/errorLib';
 import { reportWebVitals } from './reportWebVitals';
+import { ContainerProviders } from './containers';
 
 initSentry();
 
@@ -37,7 +38,9 @@ Amplify.configure({
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <App />
+      <ContainerProviders>
+        <App />
+      </ContainerProviders>
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
