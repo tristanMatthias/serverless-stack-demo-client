@@ -1,0 +1,31 @@
+.notes {
+  .search-replace {
+    padding: 0;
+    display: grid;
+    grid-template-columns: 11fr 1fr;
+    gap: 1rem;
+  }
+
+  .strike {
+    text-decoration: line-through;
+  }
+
+  .list-group-item span {
+    &.text-primary, &.strike {
+      position: relative;
+      padding: 0.1rem;
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        border-radius: 0.2rem;
+        opacity: 0.2;
+      }
+    }
+    &.text-primary:before { background:var(--primary); }
+    &.strike:before { background:var(--danger); }
+  }
+}

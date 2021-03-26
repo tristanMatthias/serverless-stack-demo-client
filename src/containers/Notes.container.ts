@@ -1,6 +1,7 @@
 import API from '@aws-amplify/api';
 import { Storage } from 'aws-amplify';
-import { useState } from 'react';
+import Fuse from 'fuse.js';
+import { useEffect, useState } from 'react';
 import { createContainer } from 'unstated-next';
 import * as yup from 'yup';
 import config from '../config';
@@ -41,6 +42,14 @@ export const NotesContainer = createContainer(() => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
+  const [fuse, setFuse] = useState<Fuse<Note>>();
+
+
+  const FUSE_OPTIONS = { keys: ['content'], includeMatches: true, threshold: 0 };
+  useEffect(() => {
+    setFuse(new Fuse(notes, FUSE_OPTIONS));
+  }, [notes]);
+
 
   const load = async (bustCache = false) => {
 
@@ -103,21 +112,18 @@ export const NotesContainer = createContainer(() => {
       note = await API.get('notes', `/notes/${id}`, {});
       if (!note) throw new Error('Could not find note');
 
-      if (note.attachment) {
-        note.attachmentURL = await Storage.vault.get(note.attachment) as string;
-      }
-
-
       upsertNoteInStore(note);
     } else note = notes[index];
+
+    if (note.attachment && !note.attachmentURL) {
+      note.attachmentURL = await Storage.vault.get(note.attachment) as string;
+    }
 
     return note;
   };
 
 
   const updateNote = async (note: IUpdateNote) => {
-    alert(2);
-
     const attachment = await uploadAttachment(note);
     await API.put('notes', `/notes/${note.noteId!}`, {
       body: { content: note.content, attachment }
@@ -133,6 +139,22 @@ export const NotesContainer = createContainer(() => {
   };
 
 
+  const searchNotes = (term: string) => fuse?.search(term) ?? [];
+
+
+  const replaceInNotes = async (search: string, replace: string) => {
+    const toReplace = searchNotes(search).map(r => r.item);
+
+    await Promise.all(toReplace
+      .map(async n => {
+        const r = new RegExp(search, 'gi');
+        await updateNote({ ...n, content: n.content.replace(r, replace) });
+      }));
+
+    setFuse(new Fuse(notes, FUSE_OPTIONS));
+  };
+
+
   return {
     notes,
     error,
@@ -141,6 +163,8 @@ export const NotesContainer = createContainer(() => {
     loadNote,
     createNote,
     updateNote,
-    deleteNote
+    deleteNote,
+    searchNotes,
+    replaceInNotes
   };
 });
