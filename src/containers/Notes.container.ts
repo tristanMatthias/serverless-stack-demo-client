@@ -45,7 +45,13 @@ export const NotesContainer = createContainer(() => {
   const [fuse, setFuse] = useState<Fuse<Note>>();
 
 
-  const FUSE_OPTIONS = { keys: ['content'], includeMatches: true, threshold: 0 };
+  const FUSE_OPTIONS: Fuse.IFuseOptions<Note> = {
+    keys: ['content'],
+    includeMatches: true,
+    threshold: 0,
+    ignoreFieldNorm: true,
+    ignoreLocation: true
+  };
   useEffect(() => {
     setFuse(new Fuse(notes, FUSE_OPTIONS));
   }, [notes]);
@@ -140,6 +146,10 @@ export const NotesContainer = createContainer(() => {
 
 
   const searchNotes = (term: string) => fuse?.search(term) ?? [];
+  // const searchNotes = (term: string) => {
+  //   const search = new RegExp(term, 'gi');
+  //   notes.forEach();
+  // };
 
 
   const replaceInNotes = async (search: string, replace: string) => {

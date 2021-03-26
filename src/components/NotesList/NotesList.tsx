@@ -49,7 +49,7 @@ export const NotesList: React.FC = () => {
       if ((resultOrNote as Fuse.FuseResult<Note>).item) {
         const r = resultOrNote as Fuse.FuseResult<Note>;
         note = r.item;
-        content = highlightMatch(r, replacing ? replaceTerm : undefined);
+        content = highlightMatch(r, searchTerm, replacing ? replaceTerm : undefined);
       } else {
         note = resultOrNote as Note;
         content = [<span>{note.content}</span>];
@@ -116,7 +116,7 @@ export const NotesList: React.FC = () => {
 
         {notesList.length
           ? notesList
-          : <span className="text-muted text-center"> No notes found </span>
+          : <ListGroup.Item className="text-muted text-center"> No notes found </ListGroup.Item>
         }
       </ListGroup>
     }

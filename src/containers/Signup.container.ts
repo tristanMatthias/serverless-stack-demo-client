@@ -59,7 +59,7 @@ export const SignupContainer = createContainer(() => {
     if (newUserDetails) {
       const { password } = newUserDetails;
       await Auth.signIn(email, password);
-
+      history.push('/');
       // User refreshed or closed page between signup and verification
     } else history.push('/login');
 
