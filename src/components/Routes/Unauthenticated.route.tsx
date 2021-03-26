@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
-import { useAppContext } from '../../libs/contextLib';
+import { AuthContainer } from '../../containers/Auth.container';
 
 export const querystring = (name: string, url = window.location.href) => {
   const n = name.replace(/[[]]/g, '\\$&');
@@ -16,11 +16,11 @@ export const querystring = (name: string, url = window.location.href) => {
 
 
 export const UnauthenticatedRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
-  const { isAuthenticated } = useAppContext();
+  const { authenticated } = AuthContainer.useContainer();
   const redirect = querystring('redirect');
 
   return <Route {...rest}>
-    {!isAuthenticated
+    {!authenticated
       ? children
       : <Redirect to={redirect === '' || redirect === null ? '/' : redirect} />
     }

@@ -7,7 +7,7 @@ import { onError } from '../libs/errorLib';
 export const AuthContainer = createContainer(() => {
   const history = useHistory();
   const [authenticated, setAuthenticated] = useState(false);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
 
   const loadSession = async () => {
     setIsAuthenticating(true);
@@ -25,8 +25,6 @@ export const AuthContainer = createContainer(() => {
 
   const signIn = async (email: string, password: string) => {
     const login = await Auth.signIn(email, password);
-    console.log(login);
-
     if (login) setAuthenticated(true);
     else setAuthenticated(false);
   };

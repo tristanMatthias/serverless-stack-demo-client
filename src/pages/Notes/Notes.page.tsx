@@ -1,166 +1,152 @@
-import { API, Storage } from 'aws-amplify';
-import React, { ChangeEventHandler, FormEventHandler, MouseEventHandler, useEffect, useState } from 'react';
-import Form from 'react-bootstrap/Form';
-import { useHistory, useParams } from 'react-router-dom';
-import { LoaderButton } from '../../components/ButtonLoader/ButtonLoader';
-import config from '../../config';
-import { s3Upload } from '../../libs/awsLib';
-import { onError } from '../../libs/errorLib';
+import React from 'react';
+import { NoteForm } from './Note.form';
 import './Notes.page.css';
 
-
-export interface Note {
-  noteId: string;
-  content: string,
-  // attachment?: File;
-  attachment?: string;
-  attachmentURL?: string;
-  createdAt: Date;
-}
-
 export default function Notes() {
-  const [file, setFile] = useState<File>();
-  const { id } = useParams<{ id: string }>();
-  const history = useHistory();
-  const [note, setNote] = useState<Note>();
-  const [content, setContent] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  return <div className="Notes">
+    <NoteForm />
+  </div>;
 
-  useEffect(() => {
-    function loadNote() {
-      return API.get('notes', `/notes/${id}`, {});
-    }
+  // const history = useHistory();
+  // const [note, setNote] = useState<Note>();
+  // const [content, setContent] = useState('');
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [isDeleting, setIsDeleting] = useState(false);
 
-    async function onLoad() {
-      try {
-        const n = await loadNote();
+  // useEffect(() => {
+  //   function loadNote() {
+  //     return API.get('notes', `/notes/${id}`, {});
+  //   }
 
-        if (n.attachment) {
-          n.attachmentURL = await Storage.vault.get(n.attachment);
-        }
+  //   async function onLoad() {
+  //     try {
+  //       const n = await loadNote();
 
-        setContent(n.content);
-        setNote(n);
-      } catch (e) {
-        onError(e);
-      }
-    }
+  //       if (n.attachment) {
+  //         n.attachmentURL = await Storage.vault.get(n.attachment);
+  //       }
 
-    onLoad();
-  }, [id]);
+  //       setContent(n.content);
+  //       setNote(n);
+  //     } catch (e) {
+  //       onError(e);
+  //     }
+  //   }
 
-  const validateForm = () => content.length > 0;
+  //   onLoad();
+  // }, [id]);
 
-  const formatFilename = (str: string) => str.replace(/^\w+-/, '');
+  // const validateForm = () => content.length > 0;
 
-  const handleFileChange: ChangeEventHandler = event => {
-    setFile((event.target as HTMLInputElement).files![0]);
-  };
+  // const formatFilename = (str: string) => str.replace(/^\w+-/, '');
 
-  const saveNote = (n: Partial<Note>) => API.put('notes', `/notes/${id}`, {
-    body: n
-  });
+  // const handleFileChange: ChangeEventHandler = event => {
+  //   setFile((event.target as HTMLInputElement).files![0]);
+  // };
 
-  const handleSubmit: FormEventHandler = async event => {
+  // const saveNote = (n: Partial<Note>) => API.put('notes', `/notes/${id}`, {
+  //   body: n
+  // });
 
-    event.preventDefault();
+  // const handleSubmit: FormEventHandler = async event => {
 
-    if (file && file.size > config.MAX_ATTACHMENT_SIZE) {
-      // eslint-disable-next-line no-alert
-      alert(
-        `Please pick a file smaller than ${config.MAX_ATTACHMENT_SIZE / 1000000
-        } MB.`
-      );
-      return;
-    }
+  //   event.preventDefault();
 
-    setIsLoading(true);
+  //   if (file && file.size > config.MAX_ATTACHMENT_SIZE) {
+  //     // eslint-disable-next-line no-alert
+  //     alert(
+  //       `Please pick a file smaller than ${config.MAX_ATTACHMENT_SIZE / 1000000
+  //       } MB.`
+  //     );
+  //     return;
+  //   }
 
-    try {
-      const attachment = file ? await s3Upload(file) : note?.attachment;
-      await saveNote({ content, attachment });
-      history.push('/');
+  //   setIsLoading(true);
 
-    } catch (e) {
-      onError(e);
-      setIsLoading(false);
-    }
-  };
+  //   try {
+  //     const attachment = file ? await s3Upload(file) : note?.attachment;
+  //     await saveNote({ content, attachment });
+  //     history.push('/');
 
-  function deleteNote() {
-    return API.del('notes', `/notes/${id}`, {});
-  }
+  //   } catch (e) {
+  //     onError(e);
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  const handleDelete: MouseEventHandler = async event => {
-    event.preventDefault();
+  // function deleteNote() {
+  //   return API.del('notes', `/notes/${id}`, {});
+  // }
 
-    // eslint-disable-next-line no-alert
-    const confirmed = window.confirm(
-      'Are you sure you want to delete this note?'
-    );
+  // const handleDelete: MouseEventHandler = async event => {
+  //   event.preventDefault();
 
-    if (!confirmed) {
-      return;
-    }
+  //   // eslint-disable-next-line no-alert
+  //   const confirmed = window.confirm(
+  //     'Are you sure you want to delete this note?'
+  //   );
 
-    setIsDeleting(true);
+  //   if (!confirmed) {
+  //     return;
+  //   }
 
-    try {
-      await deleteNote();
-      history.push('/');
-    } catch (e) {
-      onError(e);
-      setIsDeleting(false);
-    }
-  };
+  //   setIsDeleting(true);
 
-  return (
-    <div className="Notes">
-      {note && (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="content">
-            <Form.Control
-              as="textarea"
-              value={content}
-              onChange={e => setContent(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="file">
-            <Form.Label>Attachment</Form.Label>
-            {note!.attachment && (
-              <p>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={note!.attachmentURL}
-                >
-                  {formatFilename(note!.attachment!)}
-                </a>
-              </p>
-            )}
-            <Form.Control onChange={handleFileChange} type="file" />
-          </Form.Group>
-          <LoaderButton
-            block
-            size="lg"
-            type="submit"
-            isLoading={isLoading}
-            disabled={!validateForm()}
-          >
-            Save
-          </LoaderButton>
-          <LoaderButton
-            block
-            size="lg"
-            variant="danger"
-            onClick={handleDelete}
-            isLoading={isDeleting}
-          >
-            Delete
-          </LoaderButton>
-        </Form>
-      )}
-    </div>
-  );
+  //   try {
+  //     await deleteNote();
+  //     history.push('/');
+  //   } catch (e) {
+  //     onError(e);
+  //     setIsDeleting(false);
+  //   }
+  // };
+
+  // return (
+  //   <div className="Notes">
+  //     {note && (
+  //       <Form onSubmit={handleSubmit}>
+  //         <Form.Group controlId="content">
+  //           <Form.Control
+  //             as="textarea"
+  //             value={content}
+  //             onChange={e => setContent(e.target.value)}
+  //           />
+  //         </Form.Group>
+  //         <Form.Group controlId="file">
+  //           <Form.Label>Attachment</Form.Label>
+  //           {note!.attachment && (
+  //             <p>
+  //               <a
+  //                 target="_blank"
+  //                 rel="noopener noreferrer"
+  //                 href={note!.attachmentURL}
+  //               >
+  //                 {formatFilename(note!.attachment!)}
+  //               </a>
+  //             </p>
+  //           )}
+  //           <Form.Control onChange={handleFileChange} type="file" />
+  //         </Form.Group>
+  //         <LoaderButton
+  //           block
+  //           size="lg"
+  //           type="submit"
+  //           isLoading={isLoading}
+  //           disabled={!validateForm()}
+  //         >
+  //           Save
+  //         </LoaderButton>
+  //         <LoaderButton
+  //           block
+  //           size="lg"
+  //           variant="danger"
+  //           onClick={handleDelete}
+  //           isLoading={isDeleting}
+  //         >
+  //           Delete
+  //         </LoaderButton>
+  //       </Form>
+  //     )}
+  //   </div>
+  // );
 }

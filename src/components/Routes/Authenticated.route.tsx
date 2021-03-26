@@ -1,13 +1,13 @@
 import React from 'react';
-import { Route, Redirect, useLocation, RouteProps } from 'react-router-dom';
-import { useAppContext } from '../../libs/contextLib';
+import { Redirect, Route, RouteProps, useLocation } from 'react-router-dom';
+import { AuthContainer } from '../../containers/Auth.container';
 
 export const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
   const { pathname, search } = useLocation();
-  const { isAuthenticated } = useAppContext();
+  const { authenticated } = AuthContainer.useContainer();
 
   return <Route {...rest}>
-    {isAuthenticated
+    {authenticated
       ? children
       : <Redirect to={`/login?redirect=${pathname}${search}`} />
     }

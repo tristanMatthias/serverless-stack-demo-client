@@ -1,87 +1,20 @@
-import { API } from 'aws-amplify';
-import React, { useEffect, useState } from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
-import { BsPencilSquare } from 'react-icons/bs';
-import { LinkContainer } from 'react-router-bootstrap';
-import { Link } from 'react-router-dom';
-import { useAppContext } from '../../libs/contextLib';
-import { onError } from '../../libs/errorLib';
-import { Note } from '../Notes/Notes.page';
+import React from 'react';
+import { Spinner } from 'react-bootstrap';
+import { NotesList } from '../../components/NotesList/NotesList';
+import { AuthContainer } from '../../containers/Auth.container';
 import './Home.page.css';
+import { Landing } from './Landing';
 
 export default function Home() {
-  const [notes, setNotes] = useState([]);
-  const { isAuthenticated } = useAppContext();
-  const [isLoading, setIsLoading] = useState(true);
+  const { authenticated, isAuthenticating } = AuthContainer.useContainer();
 
-  const loadNotes = () => API.get('notes', '/notes', {});
-
-  useEffect(() => {
-    async function onLoad() {
-      if (!isAuthenticated) {
-        return;
-      }
-
-      try {
-        const n = await loadNotes();
-        setNotes(n);
-      } catch (e) {
-        onError(e);
-      }
-
-      setIsLoading(false);
-    }
-
-    onLoad();
-  }, [isAuthenticated]);
-
-
-  const renderNotesList = (n: Note[]) => (
-    <>
-      <LinkContainer to="/notes/new">
-        <ListGroup.Item action className="py-3 text-nowrap text-truncate">
-          <BsPencilSquare size={17} />
-          <span className="ml-2 font-weight-bold">Create a new note</span>
-        </ListGroup.Item>
-      </LinkContainer>
-      {n.map(({ noteId, content, createdAt }) => (
-        <LinkContainer key={noteId} to={`/notes/${noteId}`}>
-          <ListGroup.Item action>
-            <span className="font-weight-bold">
-              {content.trim().split('\n')[0]}
-            </span>
-            <br />
-            <span className="text-muted">
-                Created: {new Date(createdAt).toLocaleString()}
-            </span>
-          </ListGroup.Item>
-        </LinkContainer>
-      ))}
-    </>
-  );
-
-
-  const renderLander = () => <div className="lander">
-    <h1>Scratch</h1>
-    <p className="text-muted">A simple note taking app</p>
-    <div className="pt-3">
-      <Link to="/login" className="btn btn-info btn-lg mr-3">
-        Login
-      </Link>
-      <Link to="/signup" className="btn btn-success btn-lg">
-        Signup
-      </Link>
-    </div>
-  </div>;
-
-
-  const renderNotes = () => <div className="notes">
-    <h2 className="pb-3 mt-4 mb-3 border-bottom">Your Notes</h2>
-    <ListGroup>{!isLoading && renderNotesList(notes)}</ListGroup>
-  </div>;
-
+  if (isAuthenticating) return <Spinner animation="border" />;
 
   return <div className="Home">
-    {isAuthenticated ? renderNotes() : renderLander()}
+    {authenticated
+      ? <NotesList />
+      : <Landing />
+    }
   </div>;
+
 }
