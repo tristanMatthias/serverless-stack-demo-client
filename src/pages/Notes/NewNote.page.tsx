@@ -3,7 +3,4 @@ import './NewNote.page.css';
 import { NoteForm } from './Note.form';
 
 
-export const NewNote: React.FC = () =>
-  <div className="NewNote">
-    <NoteForm />
-  </div>;
+export default () => <div className="NewNote"> <NoteForm /> </div>;
